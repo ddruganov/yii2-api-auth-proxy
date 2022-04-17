@@ -2,7 +2,9 @@
 
 namespace ddruganov\Yii2ApiAuthProxy\http\controllers;
 
+use ddruganov\Yii2ApiAuthProxy\collectors\user\CurrentUserCollector;
 use ddruganov\Yii2ApiAuthProxy\forms\auth\LoginForm;
+use ddruganov\Yii2ApiAuthProxy\forms\auth\LogoutForm;
 use ddruganov\Yii2ApiAuthProxy\http\controllers\SecureApiController;
 use ddruganov\Yii2ApiEssentials\http\actions\FormAction;
 use yii\helpers\ArrayHelper;
@@ -16,7 +18,11 @@ class AuthController extends SecureApiController
                 'exceptions' => ['login', 'refresh']
             ],
             'rbac' => [
-                'exceptions' => ['login', 'refresh']
+                'exceptions' => ['login', 'refresh'],
+                'rules' => [
+                    'current-user' => 'authenticate',
+                    'logout' => 'authenticate'
+                ]
             ]
         ]);
     }
@@ -31,6 +37,14 @@ class AuthController extends SecureApiController
             'refresh' => [
                 'class' => FormAction::class,
                 'formClass' => RefreshForm::class
+            ],
+            'current-user' => [
+                'class' => FormAction::class,
+                'formClass' => CurrentUserCollector::class
+            ],
+            'logout' => [
+                'class' => FormAction::class,
+                'formClass' => LogoutForm::class
             ]
         ];
     }

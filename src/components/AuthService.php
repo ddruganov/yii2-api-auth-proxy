@@ -18,6 +18,11 @@ final class AuthService implements AuthServiceInterface
         return $this->request(AuthServiceRequestInterface::GET, self::VERIFY_ENDPOINT, [], $accessToken);
     }
 
+    public function logout(string $accessToken): ExecutionResult
+    {
+        return $this->request(AuthServiceRequestInterface::POST, self::LOGOUT_ENDPOINT, [], $accessToken);
+    }
+
     public function refresh(string $refreshToken): ExecutionResult
     {
         return $this->request(
