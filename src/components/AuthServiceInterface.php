@@ -6,8 +6,8 @@ use ddruganov\Yii2ApiEssentials\ExecutionResult;
 
 interface AuthServiceInterface
 {
-    public const VERIFY_ENDPOINT = 'auth/veriy';
-    public const REFRESH_ENDPOINT = 'auth/veriy';
+    public const VERIFY_ENDPOINT = 'auth/verify';
+    public const REFRESH_ENDPOINT = 'auth/refresh';
     public const CHECK_PERMISSION_ENDPOINT = 'auth/check-permission';
     public const CURRENT_USER_ENDPOINT = 'auth/current-user';
 
