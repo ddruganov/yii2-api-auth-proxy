@@ -24,12 +24,11 @@ final class AuthServiceTest extends BaseUnitTest
         $this->assertExecutionResultSuccessful($result);
     }
 
-    public function testGetUserDataByAccessToken()
+    public function testGetUser()
     {
-        $result = $this->getAuthService()->getUserDataByAccessToken($this->getAccessToken());
-        $this->assertExecutionResultSuccessful($result);
-        $this->assertNotEmpty($result->getData());
-        $this->assertNotNull($result->getData('id'));
+        $user = $this->getAuthService()->getUser($this->getAccessToken());
+        $this->assertNotNull($user);
+        $this->assertIsNumeric($user->getId());
     }
 
     private function getAccessToken()

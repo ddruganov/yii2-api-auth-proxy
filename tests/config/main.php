@@ -18,7 +18,7 @@ return [
     'params' => [
         'authentication' => [
             'externalService' => [
-                'baseApiUrl' => ''
+                'url' => ''
             ]
         ]
     ]
