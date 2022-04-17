@@ -7,7 +7,7 @@ use ddruganov\Yii2ApiAuthProxy\http\controllers\SecureApiController;
 use ddruganov\Yii2ApiEssentials\http\actions\FormAction;
 use yii\helpers\ArrayHelper;
 
-final class AuthController extends SecureApiController
+class AuthController extends SecureApiController
 {
     public function behaviors()
     {
