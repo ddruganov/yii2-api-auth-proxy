@@ -3,7 +3,7 @@
 namespace ddruganov\Yii2ApiAuthProxy\http\filters;
 
 use ddruganov\Yii2ApiAuthProxy\components\AccessTokenProviderInterface;
-use common\components\auth\AuthServiceInterface;
+use ddruganov\Yii2ApiAuthProxy\components\AuthServiceInterface;
 use Yii;
 use yii\base\ActionFilter;
 
