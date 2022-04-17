@@ -1,0 +1,10 @@
+version: "3.8"
+
+services:
+    yii2.api.auth.proxy.php:
+        container_name: yii2.api.auth.proxy.php
+        build: ./docker/php
+        volumes:
+            - ./:/app
+        restart: unless-stopped
+        command: ["tail", "-f", "/dev/null"]
