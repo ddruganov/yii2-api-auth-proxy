@@ -18,11 +18,8 @@ final class CurrentUserCollector extends Form
         /** @var \ddruganov\Yii2ApiAuthProxy\components\AuthServiceInterface */
         $authService = Yii::$app->get(AuthServiceInterface::class);
 
-        $result = $authService->getUserDataByAccessToken($accessTokenProvider->getAccessToken());
-        if (!$result->isSuccessful()) {
-            return ExecutionResult::exception('Ошибка получения данных о пользователе');
-        }
-
-        return $result;
+        return ExecutionResult::success(
+            $authService->getUser($accessTokenProvider->getAccessToken())
+        );
     }
 }
