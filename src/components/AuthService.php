@@ -6,7 +6,7 @@ use ddruganov\Yii2ApiEssentials\ExecutionResult;
 use Exception;
 use Yii;
 
-final class AuthService implements AuthServiceInterface
+class AuthService implements AuthServiceInterface
 {
     private function getUrl()
     {
