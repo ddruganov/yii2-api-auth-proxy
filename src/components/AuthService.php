@@ -42,7 +42,7 @@ final class AuthService implements AuthServiceInterface
         );
     }
 
-    public function getUserDataByAccessToken(string $accessToken): ExecutionResult
+    public function getUser(string $accessToken): AuthServiceUser
     {
         $result = $this->request(AuthServiceRequestInterface::GET, self::CURRENT_USER_ENDPOINT, [], $accessToken);
 
@@ -50,7 +50,7 @@ final class AuthService implements AuthServiceInterface
             throw new Exception('Ошибка получения данных о пользователе с удалённого сервера');
         }
 
-        return $result;
+        return new AuthServiceUser($result->getData());
     }
 
     private function request(string $method, string $endpoint, array $data, ?string $accessToken = null): ExecutionResult

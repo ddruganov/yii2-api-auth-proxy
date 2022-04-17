@@ -16,5 +16,5 @@ interface AuthServiceInterface
     public function refresh(string $refreshToken): ExecutionResult;
     public function logout(string $accessToken): ExecutionResult;
     public function checkPermission(string $accessToken, string $permissionName): ExecutionResult;
-    public function getUserDataByAccessToken(string $accessToken): ExecutionResult;
+    public function getUser(string $accessToken): AuthServiceUser;
 }

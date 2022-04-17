@@ -1,14 +1,21 @@
 # yii2-api-auth-proxy
 
-## Auth module
+An authentication proxy component library that connects your app with the yii2-api-auth server
+
+## Installation
+
+`composer require ddruganov/yii2-api-auth-proxy`
+
+## Configuration
 
 1. Add this to your app's main config:
 
 ```php
 ...
     'components' => [
-        AuthComponentInterface::class => AuthComponent::class,
-        RbacComponentInterface::class => RbacComponent::class
+        AccessTokenProviderInterface::class => HeaderAccessTokenProvider::class,
+        AuthServiceInterface::class => AuthService::class,
+        AuthServiceRequestInterface::class => GuzzleAuthServiceRequest::class
     ],
     'controllerMap' => [
         'auth' => AuthController::class
@@ -21,53 +28,43 @@
 ```php
 ...
     'authentication' => [
-        'loginForm' => LoginForm::class, // default is \ddruganov\Yii2ApiAuth\models\forms\LoginForm
-        'masterPassword' => [
-            'enabled' => false,
-            'value' => ''
-        ],
-        'tokens' => [
-            'secret' => '',
-            'access' => [
-                'ttl' => 0, // seconds
-                'issuer' => ''
-            ],
-            'refresh' => [
-                'ttl' => 0 // seconds
-            ]
+        'externalService' => [
+            'url' => 'https://server-that-has-yii2-api-auth-installed'
         ]
     ]
 ...
 ```
 
-3. Add migrations in you console config for rbac features:
+## How to use
 
-```php
-...
-    'controllerMap' => [
-        'migrate' => [
-            'class' => MigrateController::class,
-            'migrationPath' => null,
-            'migrationNamespaces' => [
-                'console\migrations',
-                'ddruganov\Yii2ApiAuth\migrations',
-            ],
-        ],
-    ],
-...
-```
-
-### How to use
-
--   `POST /auth/login` with email and password to login into the default app and get a pair of tokens
--   `POST /auth/refresh` with your refresh token to fet a fresh pair of tokens
--   `POST /auth/logout` to logout
--   Use `Yii::$app->get(AuthComponentInterface::class)->getCurrentUser()` to get the currently logged in `ddruganov\Yii2ApiEssentials\auth\models\User`
+-   `POST /auth/login` with an access token that you got from logging in on the yii2-api-auth server to check that your log in is valid
+-   `POST /auth/refresh` with your refresh token to get a fresh pair of tokens form the main server
+-   `POST /auth/logout` to send a logout request to the main server
+-   Use `Yii::$app->get(AuthServiceInterface::class)->getUser()` to get the `ddruganov\Yii2ApiAuthProxy\components\AuthServiceUser`
 -   Attach `AuthFilter` as a behavior to your `ApiController` to only allow authenticated users to access the endpoints
 -   Attach `RbacFilter` as a behavior to your `ApiController` to only allow users with specific permissions to access the endpoints
 
-### Multiple apps
+### Extending `AuthServiceInterface::getUser()` example
 
--   Create apps with `\ddruganov\Yii2ApiAuth\models\App`
--   Use `Yii::$app->get(AuthComponentInterface::class)->login($user, $app)` to get a pair of tokens for the said app
--   Do not forget to create permissions for newly created apps
+```php
+class YourAuthService extends Yii2ApiAuthProxyAuthService
+{
+    public function getUser(string $accessToken): YourAuthServiceUser
+    {
+        $baseUrl = Yii::$app->params['authentication']['externalService']['url'];
+
+        $result = Yii::$app->get(AuthServiceRequestInterface::class)->make(
+            method: AuthServiceRequestInterface::GET,
+            url: $baseUrl . '/' . self::CURRENT_USER_ENDPOINT,
+            data: [],
+            accessToken: $accessToken
+        );
+
+        if (!$result->isSuccessful()) {
+            throw new Exception('Error getting user from a remote auth server');
+        }
+
+        return new YourAuthServiceUser($result->getData());
+    }
+}
+```
